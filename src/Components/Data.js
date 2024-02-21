@@ -1,112 +1,111 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import Skeleton from "react-loading-skeleton";
+import { NavLink } from 'react-router-dom';
+
 
 const Data = () => {
-  const [users, setUsers] = useState([]);
-  const navigate = useNavigate();
-  
-  const getUsers = async () => {
-    const response = await fetch("https://fakestoreapi.com/products");
-    const data = await response.json();
-    setUsers(data);
-  };
+  const [data, setData] = useState([]);
+  const [filter, setFilter] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
-    getUsers();
+    const getProducts = async () => {
+      setLoading(true);
+      const response = await fetch("https://fakestoreapi.com/products");
+      const responseData = await response.json();
+
+      setData(responseData);
+      setFilter(responseData);
+      setLoading(false);
+    };
+
+    getProducts();
   }, []);
 
-  const handleClick = (productId) => {
-    // Define what you want to happen when a product is clicked
-    navigate(`/products/${productId}`);
-    console.log("Product clicked:", productId);
-    // You can navigate to another page or perform any other action here
+  const filterProduct = (cat) => {
+    const updatedList = data.filter((x) => x.category === cat);
+    setFilter(updatedList);
   };
 
+  const handleAddToCart = (product) => {
+    setCart([...cart, product]);
+     console.log('Adding to cart:', product);
+    alert(`Successfully added ${product.title} to cart`);
+  };
 
-  return (
-    <>
-      <h1
-        style={{
-          marginLeft: "120px ",
-          marginTop: "20px ",
-          fontWeight: "bold",
-        }}
-      >
-        LIST of product
-      </h1>
+  const Loading = () => {
+    return (
+      <>
+        <div className="col-md-3">
+          <Skeleton height={350} />
+        </div>
+        <div className="col-md-3">
+          <Skeleton height={350} />
+        </div>
+        <div className="col-md-3">
+          <Skeleton height={350} />
+        </div>
+        <div className="col-md-3">
+          <Skeleton height={350} />
+        </div>
+      </>
+    );
+  };
 
-      <div className="container-fluid mt-4" style={{ marginLeft: "100px" }}>
-        <div className="row mx-5">
-          {users?.map((product) => (
-            <div key={product.id} className="col-5 mt-3">
-              <div
-                onClick={() => handleClick(product.id)}
-                style={{
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                }}
-                className="card"
-              >
-                <div
-                  style={{
-                    padding: 20,
-                    boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.5)",
-                  }}
-                  className="card-body"
-                >
-                  <div className="image">
-                    <img
-                      src={product.image}
-                      className="new-img"
-                      width="220"
-                      height="200"
-                      alt={product.image}
-                    />
-                    <div key={product.id}>
-                      <h1>{product.title}</h1>
-                    </div>
-
-                    <div
-                      className="description"
-                      style={{
-                        height: "100px",
-                        overflow: "hidden",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <span>{product.description}</span>
+  const ShowProducts = () => {
+    return (
+      <>
+        <div className="row justify-content-center">
+          {filter.map((product) => {
+            return (
+              <div className="col-md-3 mt-4" key={product.id}>
+                <div className="card h-100 text-center p-4">
+                  {product && product.image && (
+                    <img src={product.image} className="card-img-top" alt={product.title} height="200px" />
+                  )}
+                  <div className="card-body">
+                    <h5 className="card-title mb-0">{product.title}</h5>
+                    <p className="card-text lead fw-bold">${product.price}</p>
+                    <div>
+                      <button
+                        style={{ marginRight: '10px', backgroundColor: 'blue', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}
+                        onClick={() => handleAddToCart(product)}>Add to Cart</button>
+                      <NavLink to={`/products/${product.id}`} className="btn btn-outline-dark">Buy Now</NavLink>
                     </div>
                   </div>
-
-                  <div className="card-footer d-flex justify-content-center align-items-center">
-                    <div className="d-flex justify-content-start align-items-center flex-grow-1">
-                      <span className="mr-2">
-                        <span style={{ fontWeight: "500" }}>PRICE:</span>{" "}
-                        {product.price}
-                      </span>
-                    </div>
-                    <div className="d-flex justify-content-end align-items-center">
-                      <p className="mb-0">
-                        <span style={{ fontWeight: "500" }}>RATE:</span> 4.4
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    className="btn btn-primary"
-                    style={{
-                      width: "100%",
-                      marginTop: "5px",
-                    }}
-                  >
-                    Add to cart
-                  </button>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div>
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <h1 className='display-6 fw-bolder text-center'>Latest Products</h1>
+            <hr />
+          </div>
+          <div className="col-12 d-flex justify-content-center">
+            <div className="buttons  pb-5">
+              <button className='btn btn-outline-dark my-5 mx-2' onClick={() => setFilter(data)}>All</button>
+              <button className='btn btn-outline-dark my-5 mx-2' onClick={() => filterProduct("men's clothing")}>Men's Clothing</button>
+              <button className='btn btn-outline-dark my-5 mx-2' onClick={() => filterProduct("women's clothing")}>Women's Clothing</button>
+              <button className='btn btn-outline-dark my-5 mx-2' onClick={() => filterProduct("jewelery")}>Jewelry</button>
+              <button className='btn btn-outline-dark my-5 mx-2' onClick={() => filterProduct("electronics")}>Electronics</button>
             </div>
-          ))}
+          </div>
+        </div>
+        <div className="row justify-content-center">
+          {loading ? <Loading /> : <ShowProducts />}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Cart from "./Cart";
 
-const Navbar = () => {
+const Navbar = ({ cart }) => {
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm">
@@ -27,7 +28,7 @@ const Navbar = () => {
                         className="collapse navbar-collapse justify-content-end"
                         id="navbarSupportedContent"
                     >
-                        <ul className="navbar-nav mb-2 mb-lg-0 "  style={{ fontWeight: "bold" }}>
+                        <ul className="navbar-nav mb-2 mb-lg-0 " style={{ fontWeight: "bold" }}>
                             <li className="nav-item ">
                                 <Link
                                     className="nav-link active mx-3"
@@ -38,13 +39,13 @@ const Navbar = () => {
                                 </Link>
                             </li>
 
-                            <li className="nav-item mx-3"  style={{ fontWeight: "bold" }}>
+                            <li className="nav-item mx-3" style={{ fontWeight: "bold" }}>
                                 <Link className="nav-link" to="/Account">
                                     Account
                                 </Link>
                             </li>
 
-                            <form className="d-flex me-2 mx-3"  style={{ fontWeight: "bold" }}>
+                            <form className="d-flex me-2 mx-3" style={{ fontWeight: "bold" }}>
                                 <input
                                     className="form-control"
                                     type="search"
@@ -53,15 +54,9 @@ const Navbar = () => {
                                 />
                             </form>
 
-                            <li className="nav-item mx-3"  style={{ fontWeight: "bold" }}>
-                                <Link className="nav-link" to="/Cart">
-                                    Cart
-                                </Link>
-                            </li>
-
                             <li className="nav-item mx-3">
-                                <button className=" btn btn-primary" type="submit"  style={{ fontWeight: "bold" }}>
-                                    More
+                                <button className=" btn btn-primary" type="submit" style={{ fontWeight: "bold" }}>
+                                    <Cart cart={cart} />
                                 </button>
                             </li>
                         </ul>
